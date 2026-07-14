@@ -8,6 +8,7 @@ from vault import get_vault_credentials
 app = Flask(__name__)
 
 CONFIG_PATH = "/etc/pdu-web-snmp/pdu_devices.yaml"
+MAX_OUTLETS = 16
 
 creds = get_vault_credentials()
 
@@ -124,7 +125,10 @@ def control():
   action = data["action"]
 
   if not isinstance(outlet_id, int):
-    return jsonify({"error": "id must be integer"}), 400
+    return jsonify({"error": "outlet id must be integer"}), 400
+
+  if outlet_id < 1 or outlet_id > MAX_OUTLETS:
+    return jsonify({"error": "outlet id must be between 1 and 16"}), 400
 
   if action not in ("on", "off"):
     return jsonify({"error": "invalid action"}), 400
