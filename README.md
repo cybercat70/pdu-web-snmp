@@ -106,7 +106,7 @@ The device names in the file are placeholders, you can configure them as you see
 The actual names used by the web interface are read from the PDU configuration.
 Only outlets mapped in pdu_devices.yaml can be controlled, to prevent critical devices from being accidentally turned off.
 
-## Vault Setup
+### Vault Setup
 
 The application uses HashiCorp Vault AppRole authentication to retrieve PDU credentials. 
 Configure your Vault instance with:
@@ -120,7 +120,10 @@ Secret Keys:
 ```
 Or manually edit "vault.py" to match your Vault configuration :).
 
-## Vault AppRole configuration
+### Vault AppRole configuration
+[TBD]
+
+### AP7902 SNMP v3 configuration specifics
 [TBD]
 
 
