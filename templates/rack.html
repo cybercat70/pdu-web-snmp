@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PDU Rack View</title>
+
+<style>
+body {
+    background: #111;
+    color: white;
+    font-family: Arial;
+}
+
+.rack {
+    width: 420px;
+    margin: 20px auto;
+}
+
+.outlet {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #222;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+/* left part */
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* LED */
+.led {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #400;
+    box-shadow: 0 0 4px #000 inset;
+}
+
+.led.on {
+    background: #2cff2c;
+    box-shadow:
+        0 0 6px #2cff2c,
+        0 0 12px #2cff2c;
+}
+
+.led.off {
+    background: #550000;
+}
+
+.id {
+    width: 28px;
+    color: #bbb;
+}
+
+.name {
+    min-width: 200px;
+}
+
+button {
+    margin-left: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+#status {
+    display: block;
+    text-align: center;
+    color: #aaa;
+    font-weight: bold;
+    margin: 8px 0;
+    min-height: 1em;
+}
+
+/* blinking LED */
+@keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.2; }
+}
+
+.led.blinking {
+    animation: blink 1s infinite;
+}
+</style>
+
+<script>
+function setStatus(text) {
+    document.getElementById("status").textContent = text;
+}
+
+
+function disableButtons(disable = true) {
+    // Refresh
+    document.getElementById("refresh-btn").disabled = disable;
+
+    // all ON/OFF buttons
+    document.querySelectorAll(".outlet button").forEach(btn => btn.disabled = disable);
+}
+
+
+async function refresh() {
+    setStatus("Updating...");
+    disableButtons(true);
+
+    let r = await fetch("/status");
+    let data = await r.json();
+
+    let rack = document.getElementById("rack");
+    rack.innerHTML = "";
+
+    data.sort((a,b)=>a.id-b.id);
+
+    data.forEach(o => {
+	let buttons = "";
+
+	if (o.controllable) {
+    	    buttons = `
+        	<button onclick="control(${o.id},'on')">ON</button>
+        	<button onclick="control(${o.id},'off')">OFF</button>
+    	    `;
+	}
+
+        let div = document.createElement("div");
+        div.className = "outlet";
+	div.id = `outlet-${o.id}`;
+
+        div.innerHTML = `
+        <div class="left">
+            <div id="led-${o.id}" class="led ${o.state=="ON"?"on":"off"}"></div>
+            <div class="id">${o.id}</div>
+            <div class="name">${o.name}</div>
+        </div>
+
+	<div>
+    	    ${buttons}
+	</div>
+        `;
+
+        rack.appendChild(div);
+    });
+
+    disableButtons(false);
+    setStatus("");
+}
+
+
+async function control(id, action) {
+
+    setStatus("Switching...");
+    disableButtons(true);
+
+    try {
+
+        const response = await fetch("/control", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id,
+                action: action
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.ok) {
+            alert(result.error);
+            return;
+        }
+
+        updateOutlet(result.id, result.state);
+
+        setStatus("");
+
+    } catch (e) {
+
+        alert(e);
+
+    } finally {
+
+        disableButtons(false);
+
+    }
+}
+
+
+window.onload = refresh;
+
+
+function updateOutlet(id, state) {
+
+    const led = document.getElementById(`led-${id}`);
+
+    if (!led)
+        return;
+
+    led.classList.remove("on", "off");
+
+    if (state === "ON")
+        led.classList.add("on");
+    else
+        led.classList.add("off");
+}
+</script>
+
+</head>
+<body>
+
+<h2 style="text-align:center;">PDU Rack View</h2>
+<div style="text-align:center;"><button onclick="refresh()" id="refresh-btn">Refresh</button></div>
+<span id="status"></span>
+<div class="rack" id="rack"></div>
+
+</body>
+</html>

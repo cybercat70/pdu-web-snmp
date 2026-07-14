@@ -1,0 +1,24 @@
+[Unit]
+Description=PDU Web Management Service (dockerized)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=no
+Type=simple
+
+ExecStartPre=/usr/bin/docker rm -f pdu-web-snmp
+
+ExecStart=/usr/bin/docker run \
+    --env-file /etc/pdu-web-snmp/.env \
+    --name pdu-web-snmp \
+    --network docker-bridge \
+    -p 5000:5000 \
+    --ip 172.25.0.2 \
+    -v /etc/pdu-web-snmp:/etc/pdu-web-snmp:ro \
+    pdu-web-snmp:latest
+
+ExecStop=/usr/bin/docker stop pdu-web-snmp
+
+[Install]
+WantedBy=multi-user.target

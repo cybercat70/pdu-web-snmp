@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker build -t pdu-web-snmp:1.0 .
+docker tag pdu-web-snmp:1.0 pdu-web-snmp:latest
