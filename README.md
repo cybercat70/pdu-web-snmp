@@ -83,13 +83,14 @@ The application communicates with the PDU via SNMP v3 and retrieves credentials 
 ## Configuration
 
 ### Environment Variables (.env)
-
+```text
 Variable     | Description                      | Example
 -------------+----------------------------------+--------------------------
 VAULT_ADDR   | HashiCorp Vault server URL       | https://vault.example.com
 CA_CERT      | Path to CA certificate for Vault | /etc/pdu-web-snmp/ca.crt
 VAULT_ROLE   | Vault AppRole role ID            | 4f826560-...
 ID           | Vault AppRole secret ID          | d714a493-...
+```
 
 ### Device Configuration (pdu_devices.yaml)
 
