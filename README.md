@@ -111,12 +111,12 @@ Only outlets mapped in pdu_devices.yaml can be controlled, to prevent critical d
 The application uses HashiCorp Vault AppRole authentication to retrieve PDU credentials. 
 Configure your Vault instance with:
 ```text
-**Mount Point:** lab (KV v2)
-**Secret Path:** pdu-web
-**Secret Keys:**
-    host: PDU      IP address or hostname
-    snmp_user:     SNMPv3 username
-    snmp_password: SNMPv3 password/auth key
+Mount Point: lab (KV v2)
+Secret Path: pdu-web
+Secret Keys:
+  host:          PDU IP address or hostname
+  snmp_user:     SNMPv3 username
+  snmp_password: SNMPv3 password/auth key
 ```
 Or manually edit "vault.py" to match your Vault configuration :).
 
