@@ -43,7 +43,7 @@ def get_outlets_status(oid):
 
 
 def get_pdu_status():
-  ALLOWED_OUTLETS = load_config()
+  allowed_outlets = load_config()
 
   outlets = []
 
@@ -61,7 +61,7 @@ def get_pdu_status():
         "id": outlet_index,
         "name": outlet_name.strip('"'),
         "state": outlet_states[outlet_index - 1].replace("outletStatus", "").upper(),
-        "controllable": outlet_index in ALLOWED_OUTLETS
+        "controllable": outlet_index in allowed_outlets
       }
     )
     outlet_index += 1
@@ -70,11 +70,15 @@ def get_pdu_status():
 
 
 def outlets_management(outlet_id, action):
-  match action:
-    case "on":
-      op_code = "1"
-    case "off":
-      op_code = "2"
+  commands = {
+    "on": "1",
+    "off": "2",
+  }
+
+  try:
+    op_code = commands[action]
+  except KeyError:
+    raise ValueError("Invalid action")
 
   snmp_query = [
     "snmpset",
@@ -111,10 +115,32 @@ def status():
 
 @app.route("/control", methods=["POST"])
 def control():
-  data = request.json
+  data = request.get_json()
+
+  if not data:
+    return jsonify({"error": "empty request"}), 400
+
   outlet_id = data["id"]
   action = data["action"]
-  outlets_management(outlet_id, action)
+
+  if not isinstance(outlet_id, int):
+    return jsonify({"error": "id must be integer"}), 400
+
+  if action not in ("on", "off"):
+    return jsonify({"error": "invalid action"}), 400
+
+  allowed_outlets = load_config()
+
+  if outlet_id not in allowed_outlets:
+    return jsonify({"error": "outlet control forbidden"}), 403
+
+  try:
+    outlets_management(outlet_id, action)
+  except subprocess.CalledProcessError as e:
+    return jsonify({
+      "error": "SNMP command failed",
+      "details": e.stderr
+    }), 502
 
   return jsonify({
     "ok": True,
