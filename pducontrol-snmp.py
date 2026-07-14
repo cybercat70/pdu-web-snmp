@@ -111,7 +111,11 @@ def index():
 
 @app.route("/status")
 def status():
-  return jsonify(get_pdu_status())
+  try:
+    pdu_status = get_pdu_status()
+    return jsonify(pdu_status)
+  except:
+    return jsonify({"error": "snmp operation failes"}), 503
 
 
 @app.route("/control", methods=["POST"])
