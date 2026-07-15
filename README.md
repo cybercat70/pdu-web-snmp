@@ -3,7 +3,7 @@
 A lightweight web management interface for the APC AP7902 Power Distribution Unit (PDU) using SNMP v3 protocol.
 
 <p align="center">
-  <img src="images/pdu-web.jpg">
+  <img src="images/pdu-web.jpg" height="600">
 </p>
 
 ## Overview
@@ -134,14 +134,14 @@ Or manually edit "vault.py" to match your Vault configuration :).
 - Enable SMNPv3:
 
 <p align="center">
-  <img src="images/snmp1.jpg">
+  <img src="images/snmp1.jpg" width="600">
 </p>
 
 - Navigate to Administration -> Network -> SMNPv3 -> user profiles
   and choose a user profile:
 
 <p align="center">
-  <img src="images/snmp2.jpg">
+  <img src="images/snmp2.jpg" width="600">
 </p>
 
 - Set the username, authentication passphrase, choose MD5 as auth protocol (secirity level "authNoPriv").
@@ -151,13 +151,13 @@ Or manually edit "vault.py" to match your Vault configuration :).
   and underpowered, even with the latest firmware installed.
 
 <p align="center">
-  <img src="images/snmp3.jpg">
+  <img src="images/snmp3.jpg" width="600">
 </p>
 
 - Navigate to Administration -> Network -> SMNPv3 -> access control
 
 <p align="center">
-  <img src="images/snmp4.jpg">
+  <img src="images/snmp4.jpg" width="600">
 </p>
 
 - Ensure that the user is enabled.
