@@ -56,6 +56,8 @@ The application communicates with the PDU via SNMP v3 and retrieves credentials 
    ```bash
    mkdir -p /etc/pdu-web-snmp
    cp etc/pdu-web-snmp/.env.example /etc/pdu-web-snmp/.env
+   chown root:root /etc/pdu-web-snmp/.env
+   chmod 600 /etc/pdu-web-snmp/.env
    cp etc/pdu-web-snmp/pdu_devices.yaml.example /etc/pdu-web-snmp/pdu_devices.yaml
    ```
 
@@ -133,16 +135,12 @@ Or manually edit "vault.py" to match your Vault configuration :).
 - Navigate to Administration -> Network -> SMNPv3 -> access
 - Enable SMNPv3:
 
-<p align="center">
-  <img src="images/snmp1.jpg" width="600">
-</p>
+<img src="images/snmp1.jpg" width="600">
 
 - Navigate to Administration -> Network -> SMNPv3 -> user profiles
   and choose a user profile:
 
-<p align="center">
-  <img src="images/snmp2.jpg" width="600">
-</p>
+<img src="images/snmp2.jpg" width="600">
 
 - Set the username, authentication passphrase, choose MD5 as auth protocol (secirity level "authNoPriv").
   I **do not** recommend setting a privacy protocol or privacy passphrase. 
@@ -150,15 +148,11 @@ Or manually edit "vault.py" to match your Vault configuration :).
   On the AP7902, however, authPriv causes a severe performance impact because the hardware is simply too old 
   and underpowered, even with the latest firmware installed.
 
-<p align="center">
-  <img src="images/snmp3.jpg" width="600">
-</p>
+<img src="images/snmp3.jpg" width="600">
 
 - Navigate to Administration -> Network -> SMNPv3 -> access control
 
-<p align="center">
-  <img src="images/snmp4.jpg" width="600">
-</p>
+<img src="images/snmp4.jpg" width="600">
 
 - Ensure that the user is enabled.
 - (optional) As an additional security measure, restrict this user 
