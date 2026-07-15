@@ -2,6 +2,10 @@
 
 A lightweight web management interface for the APC AP7902 Power Distribution Unit (PDU) using SNMP v3 protocol.
 
+<p align="center">
+  <img src="images/pdu-web.jpg">
+</p>
+
 ## Overview
 
 PDU Web SNMP provides a simple, web-based interface to monitor and control individual power outlets on an APC AP7902 PDU. 
@@ -92,7 +96,7 @@ VAULT_ROLE   | Vault AppRole role ID            | 4f826560-...
 ID           | Vault AppRole secret ID          | d714a493-...
 ```
 
-### Device Configuration (pdu_devices.yaml)
+### Device File Configuration (pdu_devices.yaml)
 
 ```yaml
 # Name              Outlet index
@@ -124,7 +128,44 @@ Or manually edit "vault.py" to match your Vault configuration :).
 [TBD]
 
 ### AP7902 SNMP v3 configuration specifics
-[TBD]
+
+- Login to the Web management GUI of AP7902.
+- Navigate to Administration -> Network -> SMNPv3 -> access
+- Enable SMNPv3:
+
+<p align="center">
+  <img src="images/snmp1.jpg">
+</p>
+
+- Navigate to Administration -> Network -> SMNPv3 -> user profiles
+  and choose a user profile:
+
+<p align="center">
+  <img src="images/snmp2.jpg">
+</p>
+
+- Set the username, authentication passphrase, choose MD5 as auth protocol (secirity level "authNoPriv").
+  I **do not** recommend setting a privacy protocol or privacy passphrase. 
+  This enables the highest SNMPv3 security level (authPriv), which uses both authentication and encryption. 
+  On the AP7902, however, authPriv causes a severe performance impact because the hardware is simply too old 
+  and underpowered, even with the latest firmware installed.
+
+<p align="center">
+  <img src="images/snmp3.jpg">
+</p>
+
+- Navigate to Administration -> Network -> SMNPv3 -> access control
+
+<p align="center">
+  <img src="images/snmp4.jpg">
+</p>
+
+- Ensure that the user is enabled.
+- (optional) As an additional security measure, restrict this user 
+  to the specific IP address or FQDN of the host that will be sending management requests, 
+  instead of leaving the default value of 0.0.0.0.
+- **Reboot the PDU's management interface.**The SNMPv3 settings will not take effect until it has been restarted
+  (it will not reset or restart the device itself).
 
 
 # Usage
