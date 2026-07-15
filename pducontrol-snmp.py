@@ -115,7 +115,7 @@ def status():
     pdu_status = get_pdu_status()
     return jsonify(pdu_status)
   except:
-    return jsonify({"error": "snmp operation failes"}), 503
+    return jsonify({"error": "snmp operation fails"}), 503
 
 
 @app.route("/control", methods=["POST"])
