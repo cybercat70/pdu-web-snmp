@@ -143,6 +143,7 @@ Or manually edit "vault.py" to match your Vault configuration :).
 <img src="images/snmp2.jpg" width="600">
 
 - Set the username, authentication passphrase, choose MD5 as auth protocol (secirity level "authNoPriv").
+
   I **do not** recommend setting a privacy protocol or privacy passphrase. 
   This enables the highest SNMPv3 security level (authPriv), which uses both authentication and encryption. 
   On the AP7902, however, authPriv causes a severe performance impact because the hardware is simply too old 
@@ -158,8 +159,8 @@ Or manually edit "vault.py" to match your Vault configuration :).
 - (optional) As an additional security measure, restrict this user 
   to the specific IP address or FQDN of the host that will be sending management requests, 
   instead of leaving the default value of 0.0.0.0.
-- **Reboot the PDU's management interface.**The SNMPv3 settings will not take effect until it has been restarted
-  (it will not reset or restart the device itself).
+- **Reboot the PDU's management interface.** The SNMPv3 settings will not take effect until it has been restarted
+  (this does not reset or reboot the device itself).
 
 
 # Usage
