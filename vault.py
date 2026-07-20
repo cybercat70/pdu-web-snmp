@@ -1,13 +1,25 @@
 #!/usr/bin/env python3
+'''Retrieves credentials from HashiCorp Vault using AppRole authentication.'''
 
 import sys
 import os
 import hvac
 
 
-# This sub is getting credentials from Vault
-# ---------------------------------------------------------------------------------------
 def get_vault_credentials():
+  '''
+  Returns the Vault-stored secrets for the PDU SNMPv3 management.
+
+  Parameters
+  ----------
+  None
+
+  Returns
+  -------
+  A dict with named credentials.
+
+  Any Vault or .env file problem terminates the process.
+  '''
 
   conf_vars = {}
 

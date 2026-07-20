@@ -14,12 +14,43 @@ creds = get_vault_credentials()
 
 
 def load_config():
+  '''
+  Loads the outlet configuration from the YAML file.
+
+  Parameters
+  ----------
+  None
+
+  Returns
+  -------
+  set[int]
+    A set containing outlet IDs that are allowed to be controlled.
+
+  Any file access or YAML parsing error propagates to the caller.
+  '''
+
   with open(CONFIG_PATH,"r") as config_file:
     data = yaml.safe_load(config_file)
   return set(data.values())
 
 
 def get_outlets_status(oid):
+  '''
+  Queries the PDU via SNMP and returns values for the specified OID.
+
+  Parameters
+  ----------
+  oid : str
+    SNMP object identifier to retrieve.
+
+  Returns
+  -------
+  list[str]
+    A list containing one value for each returned SNMP object.
+
+  Any SNMP command failure raises subprocess.CalledProcessError.
+  '''
+
   snmp_query_base = [
     "snmpwalk",
     "-v3",
@@ -44,6 +75,27 @@ def get_outlets_status(oid):
 
 
 def get_pdu_status():
+  '''
+  Retrieves the current status of all PDU outlets.
+
+  Parameters
+  ----------
+  None
+
+  Returns
+  -------
+  list[dict]
+    A list of dictionaries describing each outlet. Every dictionary
+    contains the following keys:
+
+    - id (int)
+    - name (str)
+    - state (str)
+    - controllable (bool)
+
+  Any configuration or SNMP error propagates to the caller.
+  '''
+
   allowed_outlets = load_config()
 
   outlets = []
@@ -71,6 +123,29 @@ def get_pdu_status():
 
 
 def outlets_management(outlet_id, action):
+  '''
+  Changes the power state of the specified outlet.
+
+  Parameters
+  ----------
+  outlet_id : int
+    Index number of the PDU outlet to control.
+  action : str
+
+  Returns
+  -------
+  list[str]
+    The SNMP command output split into individual lines.
+
+  Raises
+  ------
+  ValueError
+    If the requested action is not supported.
+
+  subprocess.CalledProcessError
+    If the SNMP command fails.
+  '''
+
   commands = {
     "on": "1",
     "off": "2",
@@ -106,11 +181,30 @@ def outlets_management(outlet_id, action):
 
 @app.route("/")
 def index():
+  '''
+  Serves the main web interface.
+
+  Returns
+  -------
+  Response
+    The rendered rack.html template.
+  '''
+
   return render_template("rack.html")
 
 
 @app.route("/status")
 def status():
+  '''
+  Returns the current PDU outlet status.
+
+  Returns
+  -------
+  Response
+    A JSON response containing the status of all outlets or an error
+    message if the SNMP query fails.
+  '''
+
   try:
     pdu_status = get_pdu_status()
     return jsonify(pdu_status)
@@ -120,6 +214,19 @@ def status():
 
 @app.route("/control", methods=["POST"])
 def control():
+  '''
+  Handles outlet power control requests.
+
+  The request body must contain a JSON object with the outlet ID and
+  the requested action.
+
+  Returns
+  -------
+  Response
+    A JSON response indicating whether the operation succeeded or
+    describing the validation or SNMP error.
+  '''
+
   data = request.get_json()
 
   if not data:
